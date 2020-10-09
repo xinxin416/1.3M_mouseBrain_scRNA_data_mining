@@ -1,0 +1,35 @@
+#PBS -N cellNumber_br
+#PBS -l nodes=3:ppn=10,walltime=6000:00:00
+#PBS -q high
+#PBS -j oe
+#PBS -o log_job
+
+echo --------`date`--------
+
+echo "Start at:"
+date
+
+cd /public4/chy/206/chenhy/mouse_brain/sub_20w_rep/scripts/
+
+
+sed -i "s/3456/1234/g" 01_get_sample.R
+rawseed=1234
+newseed=(3456 6789 8901 9023 5678)
+n=0
+while [ $n -lt 5 ]
+do 
+	echo "change pre seed $rawseed with new seed ${newseed[n]}"
+    sed -i "s/$rawseed/${newseed[n]}/g" 01_get_sample.R
+    rawseed=${newseed[n]} 
+    Rscript 01_get_sample.R
+	wait
+    let n+=1
+    echo $n
+done
+
+
+echo "Finished at:"
+date
+
+
+
